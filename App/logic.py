@@ -33,9 +33,11 @@ def load_data(catalog, filename):
     valor={}
     archivo=open(filename,"r")
     titulos=archivo.readline().split(",")
-    for tipo in titulos:
-        if tipo =="pickup_datetime":
-            llave=tipo
+    for i in range(0, len(titulos)):
+        if titulos[i] =="pickup_datetime":
+            llave=i
+        elif titulos[i] =="neighborhood":
+            llave=i
     linea=archivo.readline().split(",")
     while len(linea)>0:
         fecha=convertir_a_iso(linea[llave])
