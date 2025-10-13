@@ -1,4 +1,11 @@
 import time
+from DataStructures.List import array_list as al
+from DataStructures.List import single_linked_list as sl
+from DataStructures.List import list_node as ln
+from DataStructures.Map import map_entry as me
+from DataStructures.Map import map_functions as mf
+from DataStructures.Map import map_linear_probing as lp
+from DataStructures.Map import map_separate_chaining as sc
 import csv
 
 
@@ -19,8 +26,10 @@ def new_logic():
     """
     Crea el catalogo para almacenar las estructuras de datos
     """
-    #TODO: Llama a las funciónes de creación de las estructuras de datos
-    pass
+
+    catalog=sc.new_map()
+    return catalog
+
 
 
 # Funciones para la carga de datos
@@ -60,7 +69,7 @@ def req_1(catalog):
     pass
 
 
-def req_2(catalog):
+def req_2(catalog, inicio, final, N):
     """
     Retorna el resultado del requerimiento 2
     """
