@@ -11,8 +11,10 @@ def new_logic():
     """
     Crea el catalogo para almacenar las estructuras de datos
     """
-    #TODO: Llama a las funciónes de creación de las estructuras de datos
-    pass
+
+    catalog=sc.new_map()
+    return catalog
+
 
 
 # Funciones para la carga de datos
