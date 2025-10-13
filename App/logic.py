@@ -1,4 +1,19 @@
 import time
+import csv
+
+
+csv.field_size_limit(2147483647)
+
+import sys
+
+default_limit = 1000
+sys.setrecursionlimit(default_limit*10)
+
+def convertir_a_iso(fecha):
+    fecha_partes = fecha.split(" ")
+    dia, mes, año = fecha_partes[0].split("/")
+    hora = fecha_partes[1]
+    return f"{año}-{mes}-{dia} {hora}"
 
 def new_logic():
     """
@@ -14,7 +29,24 @@ def load_data(catalog, filename):
     """
     Carga los datos del reto
     """
-    # TODO: Realizar la carga de datos
+    key=0
+    valor={}
+    archivo=open(filename,"r")
+    titulos=archivo.readline().split(",")
+    for tipo in titulos:
+        if tipo =="pickup_datetime":
+            llave=tipo
+    linea=archivo.readline().split(",")
+    while len(linea)>0:
+        fecha=convertir_a_iso(linea[llave])
+        key=fecha
+        for i in range(0,len(titulos)):
+            if i!=llave:
+                valor[titulos[i]]=linea[i]
+        catalog=sc.put(catalog,key,valor)
+        linea=archivo.readline()
+        valor={}
+    archivo.close
     pass
 
 # Funciones de consulta sobre el catálogo
