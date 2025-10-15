@@ -250,6 +250,54 @@ def quick_sort(lst, sort_criteria):
 
     return resultado
 
+
+def quick_sort_3(lst, sort_criteria):
+    """
+    Quick Sort adaptado para listas SINGLE_LINKED.
+    Usa una estrategia funcional: divide la lista en tres
+    (menores, iguales y mayores) y las combina al final.
+    """
+    if size(lst) <= 1:
+        return lst
+
+    # Elegimos el pivote (el del medio)
+    mid = size(lst) // 2
+    pivot = get_element(lst, mid)
+
+    menores = new_list()
+    iguales = new_list()
+    mayores = new_list()
+
+    # Clasificar los elementos
+    for i in range(1, size(lst) + 1):
+        elem = get_element(lst, i)
+        if sort_criteria(float(elem["value"]["trip_distance"]), float(pivot["value"]["trip_distance"])):
+            add_last(menores, elem)
+        elif sort_criteria(float(pivot["value"]["trip_distance"]), float(elem["value"]["trip_distance"])):
+            add_last(mayores, elem)
+        else:
+            if sort_criteria(float(elem["value"]["total_amount"]), float(pivot["value"]["total_amount"])):
+                add_first(iguales,elem)
+            else:
+                add_last(iguales, elem)
+
+    # Ordenar recursivamente
+    menores_ordenados = quick_sort(menores, sort_criteria)
+    mayores_ordenados = quick_sort(mayores, sort_criteria)
+
+    # Unir las tres partes: menores + iguales + mayores
+    resultado = new_list()
+
+    for i in range(1, size(menores_ordenados) + 1):
+        add_last(resultado, get_element(menores_ordenados, i))
+    for i in range(1, size(iguales) + 1):
+        add_last(resultado, get_element(iguales, i))
+    for i in range(1, size(mayores_ordenados) + 1):
+        add_last(resultado, get_element(mayores_ordenados, i))
+
+    return resultado
+
+
 def sort_criteria(candidato, referencia):
 
  return candidato < referencia
