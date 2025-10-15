@@ -298,9 +298,9 @@ def quick_sort_3(lst, sort_criteria):
     return resultado
 
 
-def sort_criteria(candidato, referencia):
+def sort_criteria1(t1, t2):
 
- return candidato < referencia
+    return t1["pickup_datetime"] < t2["pickup_datetime"]
 
 def sort_criteriar2(candidato, referencia):
    

@@ -72,13 +72,64 @@ def load_data(catalog, filename):
 # Funciones de consulta sobre el catálogo
 
 
-def req_1(catalog):
+def req_1(catalog, inicio, final, N):
     """
     Retorna el resultado del requerimiento 1
     """
-    # TODO: Modificar el requerimiento 1
-    pass
+    t_inicial = time.time()
+    elementos = catalog["table"]["elements"]
+    rta=[]
+    for i in elementos: #filtro
+        if inicio <= i["pickup_datetime"] <= final:
+            rta.append(i)
+    
+    rta=sl.quick_sort(rta,sl.sort_criteria1) 
+    
+    cantidad = len(rta)
 
+    if cantidad > 2*N:
+        primeros = rta[:N]
+        ultimos = rta[-N:]
+    else:
+        primeros = rta
+        ultimos = []
+
+    
+    info_primeros = []
+    for t in primeros:
+        info_primeros.append({
+            "pickup_datetime": t["pickup_datetime"],
+            "pickup_location": [t["pickup_latitude"], t["pickup_longitude"]],
+            "dropoff_datetime": t["dropoff_datetime"],
+            "dropoff_location": [t["dropoff_latitude"], t["dropoff_longitude"]],
+            "trip_distance": t["trip_distance"],
+            "total_amount": t["total_amount"]
+        })
+
+    info_ultimos = []
+    for t in ultimos:
+        info_ultimos.append({
+            "pickup_datetime": t["pickup_datetime"],
+            "pickup_location": [t["pickup_latitude"], t["pickup_longitude"]],
+            "dropoff_datetime": t["dropoff_datetime"],
+            "dropoff_location": [t["dropoff_latitude"], t["dropoff_longitude"]],
+            "trip_distance": t["trip_distance"],
+            "total_amount": t["total_amount"]
+        })
+        
+        
+        
+    t_final = time.time()
+    tiempo_ms = (t_final - t_inicial) * 1000
+    
+    respuesta = {
+        "tiempo_ms": round(tiempo_ms, 2),
+        "total_trayectos": cantidad,
+        "primeros": info_primeros,
+        "ultimos": info_ultimos
+    }
+    
+    return respuesta
 
 def req_2(catalog, inicio, final, N):
     """
@@ -122,8 +173,6 @@ def req_2(catalog, inicio, final, N):
             "trip_distance": t["trip_distance"],
             "total_amount": t["total_amount"]
         })
-
-    
     t_final = time.time()
     tiempo_ms = (t_final - t_inicial) * 1000
 
