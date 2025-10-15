@@ -216,7 +216,7 @@ def quick_sort(lst, sort_criteria):
     if size(lst) <= 1:
         return lst
 
-    # Elegimos el pivote (el del medio)
+    
     mid = size(lst) // 2
     pivot = get_element(lst, mid)
 
@@ -224,7 +224,7 @@ def quick_sort(lst, sort_criteria):
     iguales = new_list('SINGLE_LINKED')
     mayores = new_list('SINGLE_LINKED')
 
-    # Clasificar los elementos
+    
     for i in range(1, size(lst) + 1):
         elem = get_element(lst, i)
         if sort_criteria(elem, pivot):
@@ -234,11 +234,11 @@ def quick_sort(lst, sort_criteria):
         else:
             add_last(iguales, elem)
 
-    # Ordenar recursivamente
+   
     menores_ordenados = quick_sort(menores, sort_criteria)
     mayores_ordenados = quick_sort(mayores, sort_criteria)
 
-    # Unir las tres partes: menores + iguales + mayores
+    
     resultado = new_list('SINGLE_LINKED')
 
     for i in range(1, size(menores_ordenados) + 1):
@@ -253,3 +253,14 @@ def quick_sort(lst, sort_criteria):
 def sort_criteria(candidato, referencia):
 
  return candidato < referencia
+
+def sort_criteriar2(candidato, referencia):
+   
+    if candidato["pickup_latitude"] > referencia["pickup_latitude"]:
+        return True
+    
+    elif candidato["pickup_latitude"] == referencia["pickup_latitude"]:
+        if candidato["pickup_longitude"] > referencia["pickup_longitude"]:
+            return True
+
+    return False
