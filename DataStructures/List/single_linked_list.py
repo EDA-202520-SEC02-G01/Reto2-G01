@@ -298,9 +298,9 @@ def quick_sort_3(lst, sort_criteria):
     return resultado
 
 
-def sort_criteria1(t1, t2):
+def sort_criteria1(candidato, referencia):
 
-    return t1["pickup_datetime"] < t2["pickup_datetime"]
+    return candidato["pickup_datetime"] < referencia["pickup_datetime"]
 
 def sort_criteriar2(candidato, referencia):
    
@@ -312,3 +312,9 @@ def sort_criteriar2(candidato, referencia):
             return True
 
     return False
+
+def sort_criteria_r4(candidato, referencia):
+    """
+    Ordena del más reciente al más antiguo por dropoff_datetime.
+    """
+    return candidato["dropoff_datetime"] > referencia["dropoff_datetime"]
