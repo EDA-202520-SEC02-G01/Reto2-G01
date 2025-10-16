@@ -265,7 +265,7 @@ def req_6(catalog, bar, ini, fini, n):
                 lista=sl.add_last(lista,valor)
                 respuesta=sc.put(respuesta,barrio,lista)
     Lista_viajes=sc.get(respuesta,barrio)
-    Lista_viajes=sl.quick_sort(Lista_viajes,sort_criteria_r5)
+    Lista_viajes=sl.quick_sort(Lista_viajes,sl.sort_criteriar5)
     x={}
     tamaño=sl.size(Lista_viajes)
     if tamaño>2*n:
