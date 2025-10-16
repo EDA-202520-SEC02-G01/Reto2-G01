@@ -6,6 +6,7 @@ def new_logic():
         Se crea una instancia del controlador
     """
     #TODO: Llamar la función de la lógica donde se crean las estructuras de datos
+    
     pass
 
 def print_menu():

@@ -30,6 +30,8 @@ def fecha(fecha,tipo="todo"):
         return f"{año}-{mes}-{dia}"
     elif tipo == "hora":
         return f"{hora}:{minuto}:{segundos}"
+    elif tipo == "fh":
+        return f"{año}-{mes}-{dia} {hora}"
 
 def new_logic():
     """
@@ -84,7 +86,7 @@ def req_2(catalog, inicio, final, N):
     """
     Retorna el resultado del requerimiento 2
     """
-    t_inicial = time.time()
+    t_inicial = get_time()
     dic=catalog["table"]['elements']
     res=[]
     for i in dic:
@@ -124,7 +126,7 @@ def req_2(catalog, inicio, final, N):
         })
 
     
-    t_final = time.time()
+    t_final = get_time()
     tiempo_ms = (t_final - t_inicial) * 1000
 
     respuesta = {
@@ -168,12 +170,71 @@ def req_4(catalog):
     pass
 
 
-def req_5(catalog):
+def req_5(catalog, filtro, N):
     """
     Retorna el resultado del requerimiento 5
     """
-    # TODO: Modificar el requerimiento 5
-    pass
+    t_inicial = get_time()
+    info=sc.new_map(1,0.5)
+    keys=sc.key_set(catalog)
+    for key in keys["elements"]:
+        value=sc.get(catalog,key)
+        if filtro==fecha(value["dropoff_datetime"],"fh"):
+            valor=value.copy()
+            valor["pickup_datetime"] = key
+            if sc.contains(info, filtro):
+                lista = sc.get(info, filtro)
+            else:
+                lista = al.new_list()
+            al.add_last(lista, valor)
+            sc.put(info, filtro, lista)
+    listaf=sc.get(info,filtro)
+    listaf=sl.quick_sort(listaf,sl.sort_criteriar5)
+    if sl.size(listaf) > 2*N:
+        primeros = al.sub_list(listaf, 1, N)
+        ultimos = al.sub_list(listaf, sl.size(listaf) - N + 1, N)
+    else:
+        primeros = listaf
+        ultimos = None
+    
+    primerosf = al.new_list()
+    for t in primeros["elements"]:
+        al.add_last(primerosf,{
+            "pickup_datetime": t["pickup_datetime"],
+            "pickup_location": [t["pickup_latitude"], t["pickup_longitude"]],
+            "dropoff_datetime": t["dropoff_datetime"],
+            "dropoff_location": [t["dropoff_latitude"], t["dropoff_longitude"]],
+            "trip_distance": t["trip_distance"],
+            "total_amount": t["total_amount"]
+        })
+
+    ultimosf = al.new_list()
+    if ultimos:
+        for t in ultimos["elements"]:
+            al.add_last(ultimosf({
+                "pickup_datetime": t["pickup_datetime"],
+                "pickup_location": [t["pickup_latitude"], t["pickup_longitude"]],
+                "dropoff_datetime": t["dropoff_datetime"],
+                "dropoff_location": [t["dropoff_latitude"], t["dropoff_longitude"]],
+                "trip_distance": t["trip_distance"],
+                "total_amount": t["total_amount"]
+            }))
+
+    t_final = get_time()
+    tiempo_ms = (t_final - t_inicial) * 1000
+    resultado = {
+        "tiempo_ms": tiempo_ms,
+        "total_trayectos":sl.size(listaf) ,
+        "primeros": primerosf,
+        "ultimos": ultimosf
+    }
+
+    return resultado
+            
+            
+            
+    
+    
 
 def req_6(catalog):
     """

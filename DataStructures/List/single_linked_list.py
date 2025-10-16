@@ -312,3 +312,9 @@ def sort_criteriar2(candidato, referencia):
             return True
 
     return False
+
+def sort_criteriar5(candidato, referencia):
+    if candidato["dropoff_datetime"] > referencia["dropoff_datetime"]:
+        return True
+    else:
+        return False
