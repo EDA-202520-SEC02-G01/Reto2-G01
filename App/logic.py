@@ -7,7 +7,7 @@ from DataStructures.Map import map_functions as mf
 from DataStructures.Map import map_linear_probing as lp
 from DataStructures.Map import map_separate_chaining as sc
 import csv
-
+import math
 
 csv.field_size_limit(2147483647)
 
@@ -32,13 +32,16 @@ def fecha(fecha,tipo="todo"):
         return f"{hora}:{minuto}:{segundos}"
     elif tipo == "fh":
         return f"{año}-{mes}-{dia} {hora}"
+    elif tipo =="ho":
+        return f"{hora}"
+    
 
 def new_logic():
     """
     Crea el catalogo para almacenar las estructuras de datos
     """
 
-    catalog=sc.new_map()
+    catalog=sc.new_map(1,0,5)
     return catalog
 
 
@@ -60,7 +63,7 @@ def load_data(catalog, filename):
             llave=i
     linea=archivo.readline().split(",")
     while len(linea)>0:
-        fecha=fecha(linea[llave])
+        fecha=linea[llave]
         key=fecha
         for i in range(0,len(titulos)):
             if i!=llave:
@@ -236,12 +239,46 @@ def req_5(catalog, filtro, N):
     
     
 
-def req_6(catalog):
+def req_6(catalog, bar, ini, fini, n):
     """
     Retorna el resultado del requerimiento 6
     """
-    # TODO: Modificar el requerimiento 6
-    pass
+    tiempo1=get_time()
+    respuesta=sc.new_map(1,0,5)
+    info=new_logic()
+    info=load_data(info,"nyc-neighborhoods")
+    barrios=sc.key_set(info)
+    viajes=sc.key_set(catalog)
+    for viaje in viajes["elemets"]:
+        if fecha(viaje,"ho")<=fini and fecha(viaje,"ho")>=ini:
+            valor=sc.get(catalog,viaje)
+            latitud1=valor["pickup_latitude"]
+            longitud1=valor["pickup_longitude"]
+            barrio=encuentra_barrio(info, barrios, latitud1,longitud1)
+            if barrio == bar:
+                valor["pickup_datetime"]=viaje
+                if sc.size(respuesta) == 0:
+                    lista=sl.new_list()
+                    lista=sl.add_last(lista,valor)
+                    respuesta=sc.put(respuesta,barrio,lista)
+                lista=sc.get(respuesta,barrio)
+                lista=sl.add_last(lista,valor)
+                respuesta=sc.put(respuesta,barrio,lista)
+    Lista_viajes=sc.get(respuesta,barrio)
+    Lista_viajes=sl.quick_sort(Lista_viajes,sort_criteria_r5)
+    x={}
+    tamaño=sl.size(Lista_viajes)
+    if tamaño>2*n:
+        primero=sl.sub_list(lista,0,n)
+        x=auxiliar6(primero,0,x)
+        num2=tamaño-n-1
+        ultimo=sl.sub_list(lista,num2,n)
+        x=auxiliar6(ultimo,num2,x)
+    elif tamaño<2*n:
+        x=auxiliar6(Lista_viajes,0,x)
+    x["Tiempo de ejecucion"]=delta_time(tiempo1,get_time())
+    x["Numero de trayectos"]=tamaño
+    return x
 
 
 # Funciones para medir tiempos de ejecucion
@@ -264,11 +301,46 @@ def delta_time(start, end):
 def auxiliar3(sl,num,x):
     actual=sl["firts"]
     while actual!=None:
-        x[num]["Fecha y tiempo de recogida"]=fecha(actual["info"]["key"])
-        x[num]["Latitud y longitud de recogida"]=[actual["info"]["value"]["pickup_latitude"],actual["info"]["value"]["pickup_longitude"]]
-        x[num]["Fecha y tiempo de terminación"]=fecha(actual["info"]["value"]["dropoff_datetime"])
-        x[num]["Latitud y longitud de dejada"]=[actual["info"]["value"]["dropoff_latitude"],actual["info"]["value"]["dropoff_longitude"]]
-        x[num]["Distancia recorrida"]=actual["info"]["value"]["trip_distance"]
-        x[num]["Costo total pagado"]=actual["info"]["value"]["total_amount"]
+        x["viaje"][num]["Fecha y tiempo de recogida"]=fecha(actual["info"]["key"])
+        x["viaje"][num]["Latitud y longitud de recogida"]=[actual["info"]["value"]["pickup_latitude"],actual["info"]["value"]["pickup_longitude"]]
+        x["viaje"][num]["Fecha y tiempo de terminación"]=fecha(actual["info"]["value"]["dropoff_datetime"])
+        x["viaje"][num]["Latitud y longitud de dejada"]=[actual["info"]["value"]["dropoff_latitude"],actual["info"]["value"]["dropoff_longitude"]]
+        x["viaje"][num]["Distancia recorrida"]=actual["info"]["value"]["trip_distance"]
+        x["viaje"][num]["Costo total pagado"]=actual["info"]["value"]["total_amount"]
+        actual=actual["next"]
+        num+=1
     return x
+
+def haversine(lat1, lon1, lat2, lon2): 
+    dLat = (lat2 - lat1) * math.pi / 180.0 
+    dLon = (lon2 - lon1) * math.pi / 180.0 
+    lat1 = (lat1) * math.pi / 180.0 
+    lat2 = (lat2) * math.pi / 180.0 
+    a = (pow(math.sin(dLat / 2), 2) + pow(math.sin(dLon / 2), 2) * math.cos(lat1) * math.cos(lat2)); 
+    rad = 6371 
+    c = 2 * math.asin(math.sqrt(a)) 
+    return rad * c
+
+def encuentra_barrio(map,keys,lat1,lon1):
+    menor=0
+    bar_m=""
+    for barrio in keys["elements"]:
+        info_barrio=sc.get(map,barrio)
+        distancia=haversine(lat1,lon1,info_barrio["latitude"],info_barrio["longitude"])
+        if distancia<menor:
+            bar_m=barrio
+    return bar_m
         
+def auxiliar6(sl,num,x):
+    actual=sl["firts"]
+    while actual!=None:
+        x["viaje"][num]["Fecha y tiempo de recogida"]=fecha(actual["info"]["pickup_datetime"])
+        x["viaje"][num]["Latitud y longitud de recogida"]=[actual["info"]["pickup_latitude"],actual["info"]["pickup_longitude"]]
+        x["viaje"][num]["Fecha y tiempo de terminación"]=fecha(actual["info"]["dropoff_datetime"])
+        x["viaje"][num]["Latitud y longitud de dejada"]=[actual["info"]["dropoff_latitude"],actual["info"]["dropoff_longitude"]]
+        x["viaje"][num]["Distancia recorrida"]=actual["info"]["trip_distance"]
+        x["viaje"][num]["Costo total pagado"]=actual["info"]["total_amount"]
+        actual=actual["next"]
+        num+=1
+    return x
+    
