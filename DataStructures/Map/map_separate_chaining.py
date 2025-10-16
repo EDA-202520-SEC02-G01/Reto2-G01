@@ -64,7 +64,7 @@ def put(my_map,key,value):
     pos=mf.hash_value(my_map,key)
     search=my_map["table"]["elements"][pos]
     present=sl.is_present(search,key,sl.default_function)
-    if present is not -1:
+    if present != -1:
         encontre=False
         actual=search["first"]
         while encontre == False:
