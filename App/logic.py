@@ -18,7 +18,7 @@ sys.setrecursionlimit(default_limit*10)
 
 def fecha(fecha,tipo="todo"):
     fecha_partes = fecha.split(" ")
-    fecha_1= fecha_partes[0].split("/")
+    fecha_1= fecha_partes[0].split("-")
     dia=fecha_1[0]
     mes=fecha_1[1]
     año=fecha_1[2]
