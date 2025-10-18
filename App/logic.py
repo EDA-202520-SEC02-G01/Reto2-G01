@@ -192,17 +192,17 @@ def req_2(catalog, inicio, final, N):
     final=float(final)
     t_inicial = get_time()
     dic=catalog["table"]['elements']
-    res=[]
+    res = sl.new_list() 
     for i in dic:
         i=i["first"]
         while i!=None:
             viaje = i["info"]["value"]
             if inicio <= float(viaje["pickup_latitude"]) <= final: #filtro
-                res.append(i)
+                res=sl.add_last(i)
             i = i["next"]
             
     res=sl.quick_sort(res,sl.sort_criteriar2) #uso quick sort con un sort criteria personalizado para este requerimiento
-    s=len(res)
+    s=sl.size(res)
     respuesta=[]
     if s > 2*N:
         primeros=res[:N] 
