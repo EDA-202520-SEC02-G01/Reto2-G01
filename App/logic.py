@@ -18,10 +18,16 @@ sys.setrecursionlimit(default_limit*10)
 
 def fecha(fecha,tipo="todo"):
     fecha_partes = fecha.split(" ")
-    dia, mes, año = fecha_partes[0].split("/")
+    fecha_1= fecha_partes[0].split("/")
+    dia=fecha_1[0]
+    mes=fecha_1[1]
+    año=fecha_1[2]
     if len(dia)<2:
         dia="0"+dia
-    hora, minuto, segundos = fecha_partes[1].split(":")
+    tiempo = fecha_partes[1].split(":")
+    hora =tiempo [0]
+    minuto= tiempo[1]
+    segundos=tiempo[2]
     if len(hora)<2:
         hora="0"+hora
     if tipo == "todo":
