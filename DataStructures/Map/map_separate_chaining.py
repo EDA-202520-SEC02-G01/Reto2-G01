@@ -14,13 +14,16 @@ def default_compare(key, entry):
    return -1
 
 
-def new_map(capacity, limit_factor):
+def new_map(capacity, load_factor, prime=109345121):
     my_map = {
+        "prime":prime,
+        "capacity": mf.next_prime(capacity/load_factor),
+        "scale":1,
+        "shift":0,
         "table": al.new_list(),
+        "current_factor": 0,
+        "limit_factor": load_factor,
         "size": 0,
-        "capacity": capacity,
-        "limit_factor": limit_factor,
-        "current_factor": 0
     }
     return my_map
 
