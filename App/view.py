@@ -40,8 +40,8 @@ def print_req_1(control):
     """
         Función que imprime la solución del Requerimiento 1 en consola
     """
-    inicio=input("ingresa la fecha de inicio:")
-    final=input("ingresa la fecha de finalización:")
+    inicio=input("ingresa la fecha y hora de inicio:")
+    final=input("ingresa la fecha y hora de finalización:")
     N=int(input("ingresa el numero de parametros:"))
     print(lo.req_1(control,inicio,final,N))
 
@@ -75,7 +75,7 @@ def print_req_4(control):
     """
     fecha_busqueda=input("ingresa la fecha de terminación:")
     modo=input("ingresa el momento de interés:")
-    tiempo_ref=(input("ingresa el tiempo de referencia:"))
+    tiempo_ref=(input("ingresa la fecha y tiempo de referencia:"))
     N=int(input("ingresa el numero de parametros:"))
     print(lo.req_4(control,fecha_busqueda,modo,tiempo_ref,N))
 
