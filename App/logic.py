@@ -311,6 +311,7 @@ def req_4(catalog, fecha_busqueda, modo, tiempo_ref, N):
     Retorna el resultado del requerimiento 4
     """
     t_inicial = get_time()
+    t["dropoff_datetime"]=nodo["info"]["key"]
     tabla = {}
 
     elementos = catalog["table"]["elements"]
@@ -319,7 +320,7 @@ def req_4(catalog, fecha_busqueda, modo, tiempo_ref, N):
             nodo = pos["first"]
             while nodo is not None:
                 t = nodo["info"]["value"]
-                fecha_drop = fecha(t["dropoff_datetime"], "todo")
+                fecha_drop = fecha(t["dropoff_datetime"])
                 fecha_sola = fecha_drop.split(" ")[0] 
                 if fecha_sola not in tabla:
                     tabla[fecha_sola] = []
