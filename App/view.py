@@ -127,7 +127,7 @@ def main():
         elif int(inputs) == 5:
             print_req_5(data)
 
-        elif int(inputs) == 5:
+        elif int(inputs) == 6:
             print_req_6(data)
 
         elif int(inputs) == 7:
