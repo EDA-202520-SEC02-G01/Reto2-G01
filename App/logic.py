@@ -158,9 +158,9 @@ def req_1(catalog, inicio, final, N):
     final = fecha(final, "todo")
 
     elementos = catalog["table"]["elements"]
-    for bucket in elementos:
-        if bucket and bucket["first"]:
-            nodo = bucket["first"]
+    for pos in elementos:
+        if pos and pos["first"]:
+            nodo = pos["first"]
             while nodo is not None:
                 t = nodo["info"]["value"]
                 fecha_pick = fecha(nodo["info"]["key"], "todo")
@@ -328,9 +328,9 @@ def req_4(catalog, fecha_busqueda, modo, tiempo_ref, N):
     t_inicial = get_time()
     tabla = {}
     elementos = catalog["table"]["elements"]
-    for bucket in elementos:
-        if bucket and bucket["first"]:
-            nodo = bucket["first"]
+    for pos in elementos:
+        if pos and pos["first"]:
+            nodo = pos["first"]
             while nodo is not None:
                 t = nodo["info"]["value"]
                 fecha_drop = fecha(t["dropoff_datetime"], "todo")
