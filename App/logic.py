@@ -89,29 +89,29 @@ def load_data(catalog, filename):
     
     if filename == "nyc-neighborhoods.csv":
         with open(ruta, "r", encoding="utf-8") as archivo:
-        titulos = archivo.readline().strip().split(";")
+            titulos = archivo.readline().strip().split(";")
 
-        # Encuentra índice de la llave
-        if "pickup_datetime" in titulos:
-            llave = titulos.index("pickup_datetime")
-        elif "neighborhood" in titulos:
-            llave = titulos.index("neighborhood")
+            # Encuentra índice de la llave
+            if "pickup_datetime" in titulos:
+                llave = titulos.index("pickup_datetime")
+            elif "neighborhood" in titulos:
+                llave = titulos.index("neighborhood")
 
-        for linea in archivo:
-            linea = linea.strip()
-            if not linea:
-                continue  
+            for linea in archivo:
+                linea = linea.strip()
+                if not linea:
+                    continue  
 
-            campos = linea.split(";")
-            if len(campos) != len(titulos):
-                continue  
+                campos = linea.split(";")
+                if len(campos) != len(titulos):
+                    continue  
 
-            key = campos[llave]
-            valor = {}
+                key = campos[llave]
+                valor = {}
 
-            for i in range(len(titulos)):
-                if i != llave:
-                    valor[titulos[i]] = campos[i]
+                for i in range(len(titulos)):
+                    if i != llave:
+                        valor[titulos[i]] = campos[i]
 
             catalog = sc.put(catalog, key, valor)
     else:
