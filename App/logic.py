@@ -41,20 +41,20 @@ def new_logic():
     Crea el catalogo para almacenar las estructuras de datos
     """
 
-    catalog=sc.new_map(1,0.5)
+    catalog=sc.new_map(10,0.5)
     return catalog
 
 
 
 # Funciones para la carga de datos
 
-def load_data(catalog, filename):
-    """
-    Carga los datos del reto
-    """
+"""def load_data(catalog, filename):
+
     key=0
     valor={}
-    archivo=open(filename,"r")
+    import os
+    ruta = os.path.join("Data", filename)
+    archivo = open(ruta, "r")
     titulos=archivo.readline().split(",")
     for i in range(0, len(titulos)):
         if titulos[i] =="pickup_datetime":
@@ -71,8 +71,48 @@ def load_data(catalog, filename):
         catalog=sc.put(catalog,key,valor)
         linea=archivo.readline()
         valor={}
-    archivo.close
+    archivo.close()
+    return catalog"""
+    
+def load_data(catalog, filename):
+    """
+    Carga los datos del reto desde un archivo CSV.
+    """
+    import os
+    ruta = os.path.join("Data", filename)
+
+    with open(ruta, "r", encoding="utf-8") as archivo:
+        titulos = archivo.readline().strip().split(",")
+
+        # Encuentra índice de la llave
+        if "pickup_datetime" in titulos:
+            llave = titulos.index("pickup_datetime")
+        elif "neighborhood" in titulos:
+            llave = titulos.index("neighborhood")
+        else:
+            raise ValueError("No se encontró una columna válida para usar como llave.")
+
+        for linea in archivo:
+            linea = linea.strip()
+            if not linea:
+                continue  # Ignora líneas vacías
+
+            campos = linea.split(",")
+            if len(campos) != len(titulos):
+                print(f"⚠️ Línea ignorada por longitud incorrecta: {campos}")
+                continue  # Ignora líneas mal formadas
+
+            key = campos[llave]
+            valor = {}
+
+            for i in range(len(titulos)):
+                if i != llave:
+                    valor[titulos[i]] = campos[i]
+
+            catalog = sc.put(catalog, key, valor)
+
     return catalog
+
 
 # Funciones de consulta sobre el catálogo
 

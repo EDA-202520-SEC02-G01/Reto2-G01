@@ -3,6 +3,7 @@ from DataStructures.Map import map_entry as me
 from DataStructures.Map import map_functions as mf
 from DataStructures.List import single_linked_list as sl
 from DataStructures.List import list_node as ln
+import random
 
 
 def default_compare(key, entry):
@@ -14,13 +15,26 @@ def default_compare(key, entry):
    return -1
 
 
-def new_map(capacity, limit_factor):
+def new_map(capacity, load_factor, prime=109345121):
+    import random
+    a = random.randint(1, prime - 1)
+    b = random.randint(0, prime - 1)
+
+    real_capacity = mf.next_prime(int(capacity / load_factor))
+
+    table = al.new_list()
+    for i in range(real_capacity):
+        al.add_last(table, sl.new_list())
+
     my_map = {
-        "table": al.new_list(),
+        "prime": prime,
+        "capacity": real_capacity,
+        "scale": a,
+        "shift": b,
+        "table": table,
+        "current_factor": 0,
+        "limit_factor": load_factor,
         "size": 0,
-        "capacity": capacity,
-        "limit_factor": limit_factor,
-        "current_factor": 0
     }
     return my_map
 
@@ -60,10 +74,17 @@ def value_set(my_map):
     res["size"]=my_map["size"]
     return res
 
+def default_function1(key, element):
+    if key == element["key"]:
+        return 0
+    else:
+        return -1
+
+
 def put(my_map,key,value):
     pos=mf.hash_value(my_map,key)
     search=my_map["table"]["elements"][pos]
-    present=sl.is_present(search,key,sl.default_function)
+    present=sl.is_present(search,key,default_function1)
     if present != -1:
         encontre=False
         actual=search["first"]
@@ -75,7 +96,7 @@ def put(my_map,key,value):
                 actual = actual["next"]
         return my_map
     else:
-        sl.add_last(search,ln.new_single_node({"key":key,"value":value}))
+        sl.add_last(search, {"key": key, "value": value})
         my_map["size"]+=1
         my_map["current_factor"]=my_map["size"] / my_map["capacity"]
         if my_map["current_factor"]>my_map["limit_factor"]:
@@ -101,13 +122,12 @@ def key_set(my_map):
 
 def rehash(my_map):
     numero_a=my_map["capacity"]*2
-    si=mf.is_prime(numero_a)
-    if not si:
-        numero_a=mf.next_prime(numero_a)
-    res=new_map(numero_a,my_map["limit_factor"])
-    for i in my_map["table"]["elements"]:
-        if i is not None:  
-            for element in i["elements"]:
-                if element["key"] is not None:
-                    res = put(res, element["key"], element["value"])
-    return res
+    numero_a=mf.next_prime(numero_a)
+    x=new_map(numero_a,my_map["limit_factor"])
+    for elemento in my_map["table"]["elements"]:
+        nodo=elemento["first"]
+        while nodo!=None:
+            if nodo["info"]["key"]!=None:
+                x=put(x,nodo["info"]["key"],nodo["info"]["value"])
+                nodo=nodo["next"]
+    return x
