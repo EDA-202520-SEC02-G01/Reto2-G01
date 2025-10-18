@@ -24,7 +24,7 @@ def new_map(capacity, load_factor, prime=109345121):
 
     table = al.new_list()
     for i in range(real_capacity):
-        al.insert_element(table, sl.new_list(),i)
+        al.add_last(table, sl.new_list())
 
     my_map = {
         "prime": prime,
