@@ -18,20 +18,26 @@ sys.setrecursionlimit(default_limit*10)
 
 def fecha(fecha,tipo="todo"):
     fecha_partes = fecha.split(" ")
-    dia, mes, año = fecha_partes[0].split("/")
+    fecha_1= fecha_partes[0].split("-")
+    año=fecha_1[0]
+    mes=fecha_1[1]
+    dia=fecha_1[2]
     if len(dia)<2:
         dia="0"+dia
-    hora, minuto, segundos = fecha_partes[1].split(":")
+    tiempo = fecha_partes[1].split(":")
+    hora =tiempo [0]
+    minuto= tiempo[1]
+    segundos=tiempo[2]
     if len(hora)<2:
         hora="0"+hora
     if tipo == "todo":
-        return f"{año}-{mes}-{dia} {hora}:{minuto}:{segundos}"
+        return f"{año}/{mes}/{dia} {hora}:{minuto}:{segundos}"
     elif tipo == "fecha":
-        return f"{año}-{mes}-{dia}"
+        return f"{año}/{mes}/{dia}"
     elif tipo == "hora":
         return f"{hora}:{minuto}:{segundos}"
     elif tipo == "fh":
-        return f"{año}-{mes}-{dia} {hora}"
+        return f"{año}/{mes}/{dia} {hora}"
     elif tipo =="ho":
         return f"{hora}"
     
@@ -80,38 +86,63 @@ def load_data(catalog, filename):
     """
     import os
     ruta = os.path.join("Data", filename)
+    
+    if filename == "nyc-neighborhoods.csv":
+        with open(ruta, "r", encoding="utf-8") as archivo:
+            titulos = archivo.readline().strip().split(";")
 
-    with open(ruta, "r", encoding="utf-8") as archivo:
-        titulos = archivo.readline().strip().split(",")
+            # Encuentra índice de la llave
+            if "pickup_datetime" in titulos:
+                llave = titulos.index("pickup_datetime")
+            elif "neighborhood" in titulos:
+                llave = titulos.index("neighborhood")
 
-        # Encuentra índice de la llave
-        if "pickup_datetime" in titulos:
-            llave = titulos.index("pickup_datetime")
-        elif "neighborhood" in titulos:
-            llave = titulos.index("neighborhood")
-        else:
-            raise ValueError("No se encontró una columna válida para usar como llave.")
+            for linea in archivo:
+                linea = linea.strip()
+                if not linea:
+                    continue  
 
-        for linea in archivo:
-            linea = linea.strip()
-            if not linea:
-                continue  # Ignora líneas vacías
+                campos = linea.split(";")
+                if len(campos) != len(titulos):
+                    continue  
 
-            campos = linea.split(",")
-            if len(campos) != len(titulos):
-                print(f"⚠️ Línea ignorada por longitud incorrecta: {campos}")
-                continue  # Ignora líneas mal formadas
+                key = campos[llave]
+                valor = {}
 
-            key = campos[llave]
-            valor = {}
-
-            for i in range(len(titulos)):
-                if i != llave:
-                    valor[titulos[i]] = campos[i]
+                for i in range(len(titulos)):
+                    if i != llave:
+                        valor[titulos[i]] = campos[i]
 
             catalog = sc.put(catalog, key, valor)
+    else:
+        with open(ruta, "r", encoding="utf-8") as archivo:
+            titulos = archivo.readline().strip().split(",")
+
+            # Encuentra índice de la llave
+            if "pickup_datetime" in titulos:
+                llave = titulos.index("pickup_datetime")
+            elif "neighborhood" in titulos:
+                llave = titulos.index("neighborhood")
+
+            for linea in archivo:
+                linea = linea.strip()
+                if not linea:
+                    continue 
+
+                campos = linea.split(",")
+                if len(campos) != len(titulos):
+                    continue  
+
+                key = campos[llave]
+                valor = {}
+
+                for i in range(len(titulos)):
+                    if i != llave:
+                        valor[titulos[i]] = campos[i]
+
+                catalog = sc.put(catalog, key, valor)
     
-    return catalog
+        return catalog
 
 
 # Funciones de consulta sobre el catálogo
@@ -258,6 +289,7 @@ def req_3(catalog,inicial, final, num):
             millas=i["info"]["value"]["trip_distance"]
             if float(millas)>=inicial and float(millas)<=final:
                 lista=sl.add_last(lista,i["info"])
+                i=i["next"]
     lista=sl.quick_sort_3(lista,sl.sort_criteria)
     tamaño=sl.size(lista)
     x={}
@@ -425,9 +457,9 @@ def req_6(catalog, bar, ini, fini, n):
     Retorna el resultado del requerimiento 6
     """
     tiempo1=get_time()
-    respuesta=sc.new_map(1,0,5)
+    respuesta=sc.new_map(10,0.5)
     info=new_logic()
-    info=load_data(info,"nyc-neighborhoods")
+    info=load_data(info,"nyc-neighborhoods.csv")
     barrios=sc.key_set(info)
     viajes=sc.key_set(catalog)
     for viaje in viajes["elemets"]:

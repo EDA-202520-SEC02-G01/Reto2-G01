@@ -103,6 +103,7 @@ def print_req_6(control):
     
     print (lo.req_6(control,bar,filtro,filtro2,N))
 
+
 # Se crea la lógica asociado a la vista
 control = new_logic()
 
