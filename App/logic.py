@@ -41,7 +41,7 @@ def new_logic():
     Crea el catalogo para almacenar las estructuras de datos
     """
 
-    catalog=sc.new_map(1,0,5)
+    catalog=sc.new_map(1,0.5)
     return catalog
 
 
