@@ -366,16 +366,14 @@ def req_6(catalog, bar, ini, fini, n):
             latitud1=valor["pickup_latitude"]
             longitud1=valor["pickup_longitude"]
             barrio=encuentra_barrio(info, barrios, latitud1,longitud1)
-            if barrio == bar:
-                valor["pickup_datetime"]=viaje
-                if sc.size(respuesta) == 0:
-                    lista=sl.new_list()
-                    lista=sl.add_last(lista,valor)
-                    respuesta=sc.put(respuesta,barrio,lista)
+            valor["pickup_datetime"]=viaje
+            if sc.contains(respuesta,barrio):
                 lista=sc.get(respuesta,barrio)
-                lista=sl.add_last(lista,valor)
-                respuesta=sc.put(respuesta,barrio,lista)
-    Lista_viajes=sc.get(respuesta,barrio)
+            else:
+                lista=sl.new_list()
+            lista=sl.add_last(lista,valor)
+            respuesta=sc.put(respuesta,barrio,lista)
+    Lista_viajes=sc.get(respuesta,bar)
     Lista_viajes=sl.quick_sort(Lista_viajes,sl.sort_criteriar5)
     x={}
     tamaño=sl.size(Lista_viajes)
@@ -385,10 +383,10 @@ def req_6(catalog, bar, ini, fini, n):
         num2=tamaño-n-1
         ultimo=sl.sub_list(lista,num2,n)
         x=auxiliar6(ultimo,num2,x)
-    elif tamaño<2*n:
+    else:
         x=auxiliar6(Lista_viajes,0,x)
-    x["Tiempo de ejecucion"]=delta_time(tiempo1,get_time())
     x["Numero de trayectos"]=tamaño
+    x["Tiempo de ejecucion"]=delta_time(tiempo1,get_time())
     return x
 
 
