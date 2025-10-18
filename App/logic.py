@@ -188,6 +188,8 @@ def req_2(catalog, inicio, final, N):
     """
     Retorna el resultado del requerimiento 2
     """
+    inicio=float(inicio)
+    final=float(final)
     t_inicial = get_time()
     dic=catalog["table"]['elements']
     res=[]
