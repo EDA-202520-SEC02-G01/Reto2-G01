@@ -417,7 +417,8 @@ def req_6(catalog, bar, ini, fini, n):
     Retorna el resultado del requerimiento 6
     """
     tiempo1=get_time()
-    respuesta=sc.new_map(1,0,5)
+    rta==sc.new_map(10,0.5)
+    respuesta=sc.new_map(10,0.5)
     info=new_logic()
     info=load_data(info,"nyc-neighborhoods")
     barrios=sc.key_set(info)
