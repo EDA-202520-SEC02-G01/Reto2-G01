@@ -192,6 +192,8 @@ def req_2(catalog, inicio, final, N):
     dic=catalog["table"]['elements']
     res=[]
     for i in dic:
+        print(i)
+        break
         viaje = i["value"]
         if inicio <= float(viaje["pickup_latitude"]) <= final: #filtro
             res.append(i)
