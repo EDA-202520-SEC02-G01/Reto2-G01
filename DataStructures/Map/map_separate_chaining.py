@@ -74,13 +74,12 @@ def value_set(my_map):
     res["size"]=my_map["size"]
     return res
 
-def default_function1(elemen_1, element_2):
+def default_function1(key, element):
+    if key == element["key"]:
+        return 0
+    else:
+        return -1
 
-   if elemen_1 > element_2["key"]:
-      return 1
-   elif elemen_1 < element_2["key"]:
-      return -1
-   return 0
 
 def put(my_map,key,value):
     pos=mf.hash_value(my_map,key)
