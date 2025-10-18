@@ -220,9 +220,9 @@ def quick_sort(lst, sort_criteria):
     mid = size(lst) // 2
     pivot = get_element(lst, mid)
 
-    menores = new_list('SINGLE_LINKED')
-    iguales = new_list('SINGLE_LINKED')
-    mayores = new_list('SINGLE_LINKED')
+    menores = new_list()
+    iguales = new_list()
+    mayores = new_list()
 
     
     for i in range(1, size(lst) + 1):
