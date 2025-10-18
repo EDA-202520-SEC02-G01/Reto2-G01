@@ -24,8 +24,8 @@ def load_data(control):
     Carga los datos
     """
     
-    filename=input("ingrese el nomnre del archivo:")
-    return lo.load_data(control,filename)
+    #filename=input("ingrese el nomnre del archivo:")
+    return lo.load_data(control,"taxis-small.csv")
     
 
 
