@@ -91,12 +91,12 @@ def print_req_6(control):
         Función que imprime la solución del Requerimiento 6 en consola
     """
     # TODO: Imprimir el resultado del requerimiento 6
-    bar=input("ingrese el barrio para: ")
+    bar=input("ingrese el barrio para el filtro: ")
     filtro=input("ingrese la hora de inicio para el filtro: ")
     filtro2=input("ingresa la hora final para el filtro: ")
     N=int(input("ingrese el numero de muestra: "))
     
-    print (lo.req_6(control,filtro,filtro2,N))
+    print (lo.req_6(control,bar,filtro,filtro2,N))
 
 # Se crea la lógica asociado a la vista
 control = new_logic()
