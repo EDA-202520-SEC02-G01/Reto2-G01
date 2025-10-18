@@ -281,6 +281,7 @@ def req_3(catalog,inicial, final, num):
             millas=i["info"]["value"]["trip_distance"]
             if float(millas)>=inicial and float(millas)<=final:
                 lista=sl.add_last(lista,i["info"])
+                i=i["next"]
     lista=sl.quick_sort_3(lista,sl.sort_criteria)
     tamaño=sl.size(lista)
     x={}
