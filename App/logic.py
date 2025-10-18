@@ -219,33 +219,43 @@ def req_2(catalog, inicio, final, N):
     """
     Retorna el resultado del requerimiento 2
     """
-    inicio=float(inicio)
-    final=float(final)
+    inicio = float(inicio)
+    final = float(final)
     t_inicial = get_time()
-    dic=catalog["table"]['elements']
+    dic = catalog["table"]['elements']
     res = sl.new_list() 
+
     for i in dic:
-        i=i["first"]
-        while i!=None:
+        i = i["first"]
+        while i != None:
             viaje = i["info"]["value"]
-            if inicio <= float(viaje["pickup_latitude"]) <= final: #filtro
-                sl.add_last(res,viaje)
+            lat = float(viaje["pickup_latitude"])      
+            if inicio <= lat <= final:
+                sl.add_last(res, viaje)               
             i = i["next"]
-            
-    res=sl.quick_sort(res,sl.sort_criteriar2) #uso quick sort con un sort criteria personalizado para este requerimiento
-    s=sl.size(res)
-    respuesta=[]
-    primeros = []
-    ultimos = []
-    if s > 2*N:
-        primeros=res[:N] 
-        ultimos=res[-N:]
+
+    res = sl.quick_sort(res, sl.sort_criteriar2)
+    s = sl.size(res)                                  
+    respuesta = []
+    primeros = sl.new_list()                         
+    ultimos = sl.new_list()                           
+
+    
+    if s > 2 * N:
+        for pos in range(1, N + 1):
+            elem = sl.get_element(res, pos)
+            sl.add_last(primeros, elem)
+        for pos in range(s - N + 1, s + 1):
+            elem = sl.get_element(res, pos)
+            sl.add_last(ultimos, elem)
     else:
-        respuesta=res
-        ultimos=[]
-        
+        primeros = res
+        ultimos = sl.new_list()                      
+
     info_primeros = []
-    for t in primeros:
+    i = primeros["first"]                             
+    while i is not None:
+        t = i["info"]                                
         info_primeros.append({
             "pickup_datetime": t["pickup_datetime"],
             "pickup_location": [t["pickup_latitude"], t["pickup_longitude"]],
@@ -254,9 +264,12 @@ def req_2(catalog, inicio, final, N):
             "trip_distance": t["trip_distance"],
             "total_amount": t["total_amount"]
         })
+        i = i["next"]
 
     info_ultimos = []
-    for t in ultimos:
+    i = ultimos["first"]                              
+    while i is not None:
+        t = i["info"]
         info_ultimos.append({
             "pickup_datetime": t["pickup_datetime"],
             "pickup_location": [t["pickup_latitude"], t["pickup_longitude"]],
@@ -265,8 +278,8 @@ def req_2(catalog, inicio, final, N):
             "trip_distance": t["trip_distance"],
             "total_amount": t["total_amount"]
         })
+        i = i["next"]
 
-    
     t_final = get_time()
     tiempo_ms = (t_final - t_inicial) * 1000
 
