@@ -86,27 +86,25 @@ def load_data(catalog, filename):
     """
     import os
     ruta = os.path.join("Data", filename)
-
-    with open(ruta, "r", encoding="utf-8") as archivo:
-        titulos = archivo.readline().strip().split(",")
+    
+    if filename == "nyc-neighborhoods.csv":
+        with open(ruta, "r", encoding="utf-8") as archivo:
+        titulos = archivo.readline().strip().split(";")
 
         # Encuentra índice de la llave
         if "pickup_datetime" in titulos:
             llave = titulos.index("pickup_datetime")
         elif "neighborhood" in titulos:
             llave = titulos.index("neighborhood")
-        else:
-            raise ValueError("No se encontró una columna válida para usar como llave.")
 
         for linea in archivo:
             linea = linea.strip()
             if not linea:
-                continue  # Ignora líneas vacías
+                continue  
 
-            campos = linea.split(",")
+            campos = linea.split(";")
             if len(campos) != len(titulos):
-                print(f"⚠️ Línea ignorada por longitud incorrecta: {campos}")
-                continue  # Ignora líneas mal formadas
+                continue  
 
             key = campos[llave]
             valor = {}
@@ -116,8 +114,35 @@ def load_data(catalog, filename):
                     valor[titulos[i]] = campos[i]
 
             catalog = sc.put(catalog, key, valor)
+    else:
+        with open(ruta, "r", encoding="utf-8") as archivo:
+            titulos = archivo.readline().strip().split(",")
 
-    return catalog
+            # Encuentra índice de la llave
+            if "pickup_datetime" in titulos:
+                llave = titulos.index("pickup_datetime")
+            elif "neighborhood" in titulos:
+                llave = titulos.index("neighborhood")
+
+            for linea in archivo:
+                linea = linea.strip()
+                if not linea:
+                    continue 
+
+                campos = linea.split(",")
+                if len(campos) != len(titulos):
+                    continue  
+
+                key = campos[llave]
+                valor = {}
+
+                for i in range(len(titulos)):
+                    if i != llave:
+                        valor[titulos[i]] = campos[i]
+
+                catalog = sc.put(catalog, key, valor)
+
+        return catalog
 
 
 # Funciones de consulta sobre el catálogo
