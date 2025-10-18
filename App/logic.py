@@ -54,7 +54,9 @@ def load_data(catalog, filename):
     """
     key=0
     valor={}
-    archivo=open(filename,"r")
+    import os
+    ruta = os.path.join("Data", filename)
+    archivo = open(ruta, "r")
     titulos=archivo.readline().split(",")
     for i in range(0, len(titulos)):
         if titulos[i] =="pickup_datetime":
@@ -71,7 +73,7 @@ def load_data(catalog, filename):
         catalog=sc.put(catalog,key,valor)
         linea=archivo.readline()
         valor={}
-    archivo.close
+    archivo.close()
     return catalog
 
 # Funciones de consulta sobre el catálogo
