@@ -275,14 +275,12 @@ def req_2(catalog, inicio, final, N):
 def req_3(catalog,inicial, final, num):
     ini=get_time()
     lista=sl.new_list()
-    for i in catalog["table"]["elements"]:
-        i=i["first"]
-        while i!=None:
-            millas=i["info"]["value"]["trip_distance"]
-            if float(millas)>=inicial and float(millas)<=final:
-                lista=sl.add_last(lista,i["info"])
-                i=i["next"]
-    lista=sl.quick_sort_3(lista,sl.sort_criteria)
+    viajes=sc.key_set(catalog)
+    for viaje in viajes["elemets"]:
+        valor=sc.get(catalog,viaje)
+        if float(valor["trip_distance"])>=inicial and float(valor["trip_distance"])>=final:
+            lista=sl.add_last(lista,i["info"])
+    lista=sl.quick_sort_3(lista,sl.default_function)
     tamaño=sl.size(lista)
     x={}
     if tamaño>2*num:

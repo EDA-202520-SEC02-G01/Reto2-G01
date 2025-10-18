@@ -118,6 +118,7 @@ def key_set(my_map):
         actual=i["first"]
         while actual is not None:
             al.add_last(res,i["key"])
+            actual=actual["next"]
     return res
 
 def rehash(my_map):
