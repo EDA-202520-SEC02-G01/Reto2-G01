@@ -229,12 +229,14 @@ def req_2(catalog, inicio, final, N):
         while i!=None:
             viaje = i["info"]["value"]
             if inicio <= float(viaje["pickup_latitude"]) <= final: #filtro
-                res=sl.add_last(i)
+                sl.add_last(res,viaje)
             i = i["next"]
             
     res=sl.quick_sort(res,sl.sort_criteriar2) #uso quick sort con un sort criteria personalizado para este requerimiento
     s=sl.size(res)
     respuesta=[]
+    primeros = []
+    ultimos = []
     if s > 2*N:
         primeros=res[:N] 
         ultimos=res[-N:]
