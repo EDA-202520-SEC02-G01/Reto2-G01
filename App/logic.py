@@ -110,7 +110,7 @@ def load_data(catalog, filename):
                     valor[titulos[i]] = campos[i]
 
             catalog = sc.put(catalog, key, valor)
-
+    
     return catalog
 
 
@@ -192,11 +192,11 @@ def req_2(catalog, inicio, final, N):
     dic=catalog["table"]['elements']
     res=[]
     for i in dic:
-        print(i)
-        break
-        viaje = i["value"]
-        if inicio <= float(viaje["pickup_latitude"]) <= final: #filtro
-            res.append(i)
+        i=i["first"]
+        while i!=None:
+            viaje = i["info"]["value"]
+            if inicio <= float(viaje["pickup_latitude"]) <= final: #filtro
+                res.append(i)
             
     res=sl.quick_sort(res,sl.sort_criteriar2) #uso quick sort con un sort criteria personalizado para este requerimiento
     s=len(res)
