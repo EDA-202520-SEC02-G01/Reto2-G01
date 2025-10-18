@@ -233,7 +233,7 @@ def req_2(catalog, inicio, final, N):
             i = i["next"]
             
     res=sl.quick_sort(res,sl.sort_criteriar2) #uso quick sort con un sort criteria personalizado para este requerimiento
-    s=sl.size(res,viaje)
+    s=sl.size(res)
     respuesta=[]
     primeros = []
     ultimos = []
