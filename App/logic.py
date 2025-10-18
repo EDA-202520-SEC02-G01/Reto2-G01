@@ -273,15 +273,25 @@ def req_2(catalog, inicio, final, N):
 
 
 def req_3(catalog,inicial, final, num):
+    
     ini=get_time()
     lista=sl.new_list()
+    
+    #tomo las llaves de los viajes (fecha inicial)
     viajes=sc.key_set(catalog)
     for viaje in viajes["elemets"]:
         valor=sc.get(catalog,viaje)
+        valor["pickup_datetime"]=viaje
+        
+        #hago el filtro por fecha 
         if float(valor["trip_distance"])>=inicial and float(valor["trip_distance"])>=final:
-            lista=sl.add_last(lista,i["info"])
+            lista=sl.add_last(lista,valor)
+    
+    #organizo
     lista=sl.quick_sort_3(lista,sl.default_function)
     tamaño=sl.size(lista)
+    
+    #creo diccionario de respuesta
     x={}
     if tamaño>2*num:
         primero=sl.sub_list(lista,0,num)
@@ -289,8 +299,10 @@ def req_3(catalog,inicial, final, num):
         num2=tamaño-num-1
         ultimo=sl.sub_list(lista,num2,num)
         x=auxiliar3(ultimo,num2,x)
+        
     else:
         x=auxiliar3(lista,0,x)
+        
     return{"tiempo de ejecicion:":delta_time(ini,get_time()),
            "Numero de trayectos:":tamaño,
            "info:":x}   
@@ -449,34 +461,52 @@ def req_6(catalog, bar, ini, fini, n):
     tiempo1=get_time()
     respuesta=sc.new_map(10,0.5)
     info=new_logic()
+    
+    #cargas info de barrios
     info=load_data(info,"nyc-neighborhoods.csv")
     barrios=sc.key_set(info)
+    
+    #tomas las llaves de los viajes
     viajes=sc.key_set(catalog)
     for viaje in viajes["elemets"]:
+        
+        #filtras por hora
         if fecha(viaje,"ho")<=fini and fecha(viaje,"ho")>=ini:
             valor=sc.get(catalog,viaje)
+            valor["pickup_datetime"]=viaje
+            
+            #determinas el barrio
             latitud1=valor["pickup_latitude"]
             longitud1=valor["pickup_longitude"]
             barrio=encuentra_barrio(info, barrios, latitud1,longitud1)
-            valor["pickup_datetime"]=viaje
+            
+            #Verificas si ya existe en la tabla
             if sc.contains(respuesta,barrio):
                 lista=sc.get(respuesta,barrio)
             else:
                 lista=sl.new_list()
+            
+            #agregas a la tabla
             lista=sl.add_last(lista,valor)
             respuesta=sc.put(respuesta,barrio,lista)
+        
+    #tomas la lista de viajes segun el barrio y la ordenas 
     Lista_viajes=sc.get(respuesta,bar)
     Lista_viajes=sl.quick_sort(Lista_viajes,sl.sort_criteriar5)
+    
+    #creas el diccionario de la respuesta y se llena 
     x={}
     tamaño=sl.size(Lista_viajes)
+    
     if tamaño>2*n:
         primero=sl.sub_list(lista,0,n)
-        x=auxiliar6(primero,0,x)
+        x=auxiliar6(primero,0,x) #la funcion auxiliar toma la informacion de los viajes solicitada y la agrega en el diccionario x
         num2=tamaño-n-1
         ultimo=sl.sub_list(lista,num2,n)
-        x=auxiliar6(ultimo,num2,x)
+        x=auxiliar6(ultimo,num2,x) #la funcion auxiliar toma la informacion de los viajes solicitada y la agrega en el diccionario x
+    
     else:
-        x=auxiliar6(Lista_viajes,0,x)
+        x=auxiliar6(Lista_viajes,0,x) #la funcion auxiliar toma la informacion de los viajes solicitada y la agrega en el diccionario x
     x["Numero de trayectos"]=tamaño
     x["Tiempo de ejecucion"]=delta_time(tiempo1,get_time())
     return x
@@ -502,7 +532,7 @@ def delta_time(start, end):
 def auxiliar3(sl,num,x):
     actual=sl["firts"]
     while actual!=None:
-        x["viaje"][num]["Fecha y tiempo de recogida"]=fecha(actual["info"]["key"])
+        x["viaje"][num]["Fecha y tiempo de recogida"]=fecha(actual["info"]["value"]["pickup_datetime"])
         x["viaje"][num]["Latitud y longitud de recogida"]=[actual["info"]["value"]["pickup_latitude"],actual["info"]["value"]["pickup_longitude"]]
         x["viaje"][num]["Fecha y tiempo de terminación"]=fecha(actual["info"]["value"]["dropoff_datetime"])
         x["viaje"][num]["Latitud y longitud de dejada"]=[actual["info"]["value"]["dropoff_latitude"],actual["info"]["value"]["dropoff_longitude"]]
