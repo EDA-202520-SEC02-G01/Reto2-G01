@@ -261,7 +261,9 @@ def req_3(catalog,inicial, final, num):
         x=auxiliar3(ultimo,num2,x)
     else:
         x=auxiliar3(lista,0,x)
-    return{"tiempo de ejecicion:":delta_time(ini,get_time()),"Numero de trayectos:":tamaño,"info:":x}   
+    return{"tiempo de ejecicion:":delta_time(ini,get_time()),
+           "Numero de trayectos:":tamaño,
+           "info:":x}   
         
 
 def req_4(catalog, fecha_busqueda, modo, tiempo_ref, N):
