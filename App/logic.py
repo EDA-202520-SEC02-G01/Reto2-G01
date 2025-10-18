@@ -419,7 +419,7 @@ def req_6(catalog, bar, ini, fini, n):
     tiempo1=get_time()
     respuesta=sc.new_map(10,0.5)
     info=new_logic()
-    info=load_data(info,"nyc-neighborhoods")
+    info=load_data(info,"nyc-neighborhoods.csv")
     barrios=sc.key_set(info)
     viajes=sc.key_set(catalog)
     for viaje in viajes["elemets"]:
