@@ -199,6 +199,7 @@ def req_2(catalog, inicio, final, N):
             viaje = i["info"]["value"]
             if inicio <= float(viaje["pickup_latitude"]) <= final: #filtro
                 res.append(i)
+            i = i["next"]
             
     res=sl.quick_sort(res,sl.sort_criteriar2) #uso quick sort con un sort criteria personalizado para este requerimiento
     s=len(res)
