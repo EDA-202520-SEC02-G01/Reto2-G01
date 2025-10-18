@@ -19,9 +19,9 @@ sys.setrecursionlimit(default_limit*10)
 def fecha(fecha,tipo="todo"):
     fecha_partes = fecha.split(" ")
     fecha_1= fecha_partes[0].split("-")
-    dia=fecha_1[0]
+    año=fecha_1[0]
     mes=fecha_1[1]
-    año=fecha_1[2]
+    dia=fecha_1[2]
     if len(dia)<2:
         dia="0"+dia
     tiempo = fecha_partes[1].split(":")
@@ -31,13 +31,13 @@ def fecha(fecha,tipo="todo"):
     if len(hora)<2:
         hora="0"+hora
     if tipo == "todo":
-        return f"{año}-{mes}-{dia} {hora}:{minuto}:{segundos}"
+        return f"{año}/{mes}/{dia} {hora}:{minuto}:{segundos}"
     elif tipo == "fecha":
-        return f"{año}-{mes}-{dia}"
+        return f"{año}/{mes}/{dia}"
     elif tipo == "hora":
         return f"{hora}:{minuto}:{segundos}"
     elif tipo == "fh":
-        return f"{año}-{mes}-{dia} {hora}"
+        return f"{año}/{mes}/{dia} {hora}"
     elif tipo =="ho":
         return f"{hora}"
     
