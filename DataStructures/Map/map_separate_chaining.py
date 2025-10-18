@@ -16,16 +16,22 @@ def default_compare(key, entry):
 
 
 def new_map(capacity, load_factor, prime=109345121):
-    
+    import random
     a = random.randint(1, prime - 1)
     b = random.randint(0, prime - 1)
 
+    real_capacity = mf.next_prime(int(capacity / load_factor))
+
+    table = al.new_list()
+    for i in range(real_capacity):
+        al.insert_element(table, sl.new_list(),i)
+
     my_map = {
-        "prime":prime,
-        "capacity": mf.next_prime(int(capacity / load_factor)),
-        "scale":a,
-        "shift":b,
-        "table": al.new_list(),
+        "prime": prime,
+        "capacity": real_capacity,
+        "scale": a,
+        "shift": b,
+        "table": table,
         "current_factor": 0,
         "limit_factor": load_factor,
         "size": 0,
@@ -109,13 +115,12 @@ def key_set(my_map):
 
 def rehash(my_map):
     numero_a=my_map["capacity"]*2
-    si=mf.is_prime(numero_a)
-    if not si:
-        numero_a=mf.next_prime(numero_a)
-    res=new_map(numero_a,my_map["limit_factor"])
-    for i in my_map["table"]["elements"]:
-        if i is not None:  
-            for element in i["elements"]:
-                if element["key"] is not None:
-                    res = put(res, element["key"], element["value"])
-    return res
+    numero_a=mf.next_prime(numero_a)
+    x=new_map(numero_a,my_map["limit_factor"])
+    for elemento in my_map["table"]["elements"]:
+        nodo=elemento["first"]
+        while nodo!=None:
+            if nodo["info"]["key"]!=None:
+                x=put(x,nodo["info"]["key"],nodo["info"]["value"])
+                nodo=nodo["next"]
+    return x
