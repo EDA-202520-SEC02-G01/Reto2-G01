@@ -96,7 +96,7 @@ def put(my_map,key,value):
                 actual = actual["next"]
         return my_map
     else:
-        sl.add_last(search,ln.new_single_node({"key":key,"value":value}))
+        sl.add_last(search, {"key": key, "value": value})
         my_map["size"]+=1
         my_map["current_factor"]=my_map["size"] / my_map["capacity"]
         if my_map["current_factor"]>my_map["limit_factor"]:
