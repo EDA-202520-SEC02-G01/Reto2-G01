@@ -77,7 +77,7 @@ def print_req_4(control):
     modo=input("ingresa el momento de interés:")
     tiempo_ref=(input("ingresa el tiempo de referencia:"))
     N=int(input("ingresa el numero de parametros:"))
-    print(lo.req_1(control,fecha_busqueda,modo,tiempo_ref,N))
+    print(lo.req_4(control,fecha_busqueda,modo,tiempo_ref,N))
 
 
 def print_req_5(control):

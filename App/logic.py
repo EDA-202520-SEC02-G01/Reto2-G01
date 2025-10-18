@@ -81,31 +81,41 @@ def req_1(catalog, inicio, final, N):
     """
     Retorna el resultado del requerimiento 1
     """
-    t_inicial = time.time()
+    t_inicial = get_time()
+    rta = []
+    inicio = fecha(inicio, "todo")
+    final = fecha(final, "todo")
+
     elementos = catalog["table"]["elements"]
-    rta=[]
-    for i in elementos: #filtro
-        if inicio <= i["pickup_datetime"] <= final:
-            rta.append(i)
-    
-    rta=sl.quick_sort(rta,sl.sort_criteria1) 
-    
+    for pos in elementos:
+        if pos and pos["first"]:
+            nodo = pos["first"]
+            while nodo is not None:
+                t = nodo["info"]["value"]
+                fecha_pick = fecha(t["pickup_datetime"], "todo")
+                if inicio <= fecha_pick <= final:
+                    rta.append(t)
+                nodo = nodo["next"]
+
+    rta = sl.quick_sort(rta, sl.sort_criteria1)
     cantidad = len(rta)
 
-    if cantidad > 2*N:
+    if cantidad > 0:
         primeros = rta[:N]
+    else:
+        primeros = []
+
+    if cantidad > 2 * N:
         ultimos = rta[-N:]
     else:
-        primeros = rta
         ultimos = []
 
-    
     info_primeros = []
     for t in primeros:
         info_primeros.append({
-            "pickup_datetime": t["pickup_datetime"],
+            "pickup_datetime": fecha(t["pickup_datetime"], "todo"),
             "pickup_location": [t["pickup_latitude"], t["pickup_longitude"]],
-            "dropoff_datetime": t["dropoff_datetime"],
+            "dropoff_datetime": fecha(t["dropoff_datetime"], "todo"),
             "dropoff_location": [t["dropoff_latitude"], t["dropoff_longitude"]],
             "trip_distance": t["trip_distance"],
             "total_amount": t["total_amount"]
@@ -114,26 +124,24 @@ def req_1(catalog, inicio, final, N):
     info_ultimos = []
     for t in ultimos:
         info_ultimos.append({
-            "pickup_datetime": t["pickup_datetime"],
+            "pickup_datetime": fecha(t["pickup_datetime"], "todo"),
             "pickup_location": [t["pickup_latitude"], t["pickup_longitude"]],
-            "dropoff_datetime": t["dropoff_datetime"],
+            "dropoff_datetime": fecha(t["dropoff_datetime"], "todo"),
             "dropoff_location": [t["dropoff_latitude"], t["dropoff_longitude"]],
             "trip_distance": t["trip_distance"],
             "total_amount": t["total_amount"]
         })
-        
-        
-        
-    t_final = time.time()
-    tiempo_ms = (t_final - t_inicial) * 1000
-    
+
+    t_final = get_time()
+    tiempo_ms = t_final - t_inicial
+
     respuesta = {
         "tiempo_ms": round(tiempo_ms, 2),
         "total_trayectos": cantidad,
         "primeros": info_primeros,
         "ultimos": info_ultimos
     }
-    
+
     return respuesta
 
 def req_2(catalog, inicio, final, N):
@@ -221,40 +229,52 @@ def req_4(catalog, fecha_busqueda, modo, tiempo_ref, N):
     Retorna el resultado del requerimiento 4
     """
     t_inicial = get_time()
-    dic = catalog["table"]["elements"]
     tabla = {}
-    for i in dic:
-        fecha = i["dropoff_datetime"].strftime("%Y-%m-%d")
-        if fecha not in tabla:
-            tabla[fecha] = []
-        tabla[fecha].append(i)
+
+    elementos = catalog["table"]["elements"]
+    for pos in elementos:
+        if pos and pos["first"]:
+            nodo = pos["first"]
+            while nodo is not None:
+                t = nodo["info"]["value"]
+                fecha_drop = fecha(t["dropoff_datetime"], "todo")
+                fecha_sola = fecha_drop.split(" ")[0] 
+                if fecha_sola not in tabla:
+                    tabla[fecha_sola] = []
+                tabla[fecha_sola].append(t)
+                nodo = nodo["next"]
 
     trayectos = tabla.get(fecha_busqueda, [])
     filtrados = []
 
     for t in trayectos:
-        hora_fin = t["dropoff_datetime"].get_time()
-        if modo == "ANTES" and hora_fin < tiempo_ref:
-            filtrados.append(t)
-        elif modo == "DESPUES" and hora_fin > tiempo_ref:
-            filtrados.append(t)
+        hora_fin = fecha(t["dropoff_datetime"], "hora")  
+        if modo == "ANTES":
+            if hora_fin < tiempo_ref:
+                filtrados.append(t)
+        elif modo == "DESPUES":
+            if hora_fin > tiempo_ref:
+                filtrados.append(t)
 
     filtrados = sl.quick_sort(filtrados, sl.sort_criteria_r4)
-    s = len(filtrados)
+    cantidad = len(filtrados)
 
-    if s > 2 * N:
+    if cantidad > 0:
         primeros = filtrados[:N]
+    else:
+        primeros = []
+
+    if cantidad > 2 * N:
         ultimos = filtrados[-N:]
     else:
-        primeros = filtrados
         ultimos = []
 
     info_primeros = []
     for t in primeros:
         info_primeros.append({
-            "pickup_datetime": t["pickup_datetime"],
+            "pickup_datetime": fecha(t["pickup_datetime"], "todo"),
             "pickup_location": [t["pickup_latitude"], t["pickup_longitude"]],
-            "dropoff_datetime": t["dropoff_datetime"],
+            "dropoff_datetime": fecha(t["dropoff_datetime"], "todo"),
             "dropoff_location": [t["dropoff_latitude"], t["dropoff_longitude"]],
             "trip_distance": t["trip_distance"],
             "total_amount": t["total_amount"]
@@ -263,9 +283,9 @@ def req_4(catalog, fecha_busqueda, modo, tiempo_ref, N):
     info_ultimos = []
     for t in ultimos:
         info_ultimos.append({
-            "pickup_datetime": t["pickup_datetime"],
+            "pickup_datetime": fecha(t["pickup_datetime"], "todo"),
             "pickup_location": [t["pickup_latitude"], t["pickup_longitude"]],
-            "dropoff_datetime": t["dropoff_datetime"],
+            "dropoff_datetime": fecha(t["dropoff_datetime"], "todo"),
             "dropoff_location": [t["dropoff_latitude"], t["dropoff_longitude"]],
             "trip_distance": t["trip_distance"],
             "total_amount": t["total_amount"]
@@ -276,7 +296,7 @@ def req_4(catalog, fecha_busqueda, modo, tiempo_ref, N):
 
     respuesta = {
         "tiempo_ms": round(tiempo_ms, 2),
-        "total_trayectos": s,
+        "total_trayectos": cantidad,
         "primeros": info_primeros,
         "ultimos": info_ultimos
     }
