@@ -61,9 +61,9 @@ def print_req_3(control):
         Función que imprime la solución del Requerimiento 3 en consola
     """
     
-    inicial=int(input("distancia inicial"))
-    final=int(input("distancia final"))
-    num=int(input("numero de muestra:"))
+    inicial=int(input("distancia inicial: "))
+    final=int(input("distancia final: "))
+    num=int(input("numero de muestra: "))
     print(lo.req_3(control,inicial,final,num))
 
 
