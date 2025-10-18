@@ -163,7 +163,7 @@ def req_1(catalog, inicio, final, N):
             nodo = pos["first"]
             while nodo is not None:
                 t = nodo["info"]["value"]
-                fecha_pick = fecha(t["pickup_datetime"], "todo")
+                fecha_pick = fecha(nodo["info"]["key"])
                 if inicio <= fecha_pick <= final:
                     rta.append(t)
                 nodo = nodo["next"]
