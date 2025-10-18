@@ -1,5 +1,5 @@
 import sys
-import logic as lo
+from App import logic as lo
 from DataStructures.Map import map_separate_chaining as msc
 
 def new_logic():
