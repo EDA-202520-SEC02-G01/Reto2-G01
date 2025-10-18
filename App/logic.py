@@ -153,37 +153,40 @@ def req_1(catalog, inicio, final, N):
     Retorna el resultado del requerimiento 1
     """
     t_inicial = get_time()
-    rta = []
+    rta = sl.new_list()
     inicio = fecha(inicio, "todo")
     final = fecha(final, "todo")
 
     elementos = catalog["table"]["elements"]
-    for pos in elementos:
-        if pos and pos["first"]:
-            nodo = pos["first"]
+    for bucket in elementos:
+        if bucket and bucket["first"]:
+            nodo = bucket["first"]
             while nodo is not None:
                 t = nodo["info"]["value"]
-                fecha_pick = fecha(nodo["info"]["key"])
+                fecha_pick = fecha(nodo["info"]["key"], "todo")
+
                 if inicio <= fecha_pick <= final:
-                    rta.append(t)
+                    sl.add_last(rta, t)
+
                 nodo = nodo["next"]
 
     rta = sl.quick_sort(rta, sl.sort_criteria1)
-    cantidad = len(rta)
+    cantidad = sl.size(rta)
 
     if cantidad > 0:
-        primeros = rta[:N]
+        primeros = sl.sub_list(rta, 1, N)
     else:
-        primeros = []
+        primeros = sl.new_list()
 
     if cantidad > 2 * N:
-        ultimos = rta[-N:]
+        ultimos = sl.sub_list(rta, cantidad - N + 1, N)
     else:
-        ultimos = []
+        ultimos = sl.new_list()
 
-    info_primeros = []
-    for t in primeros:
-        info_primeros.append({
+    info_primeros = sl.new_list()
+    for i in range(1, sl.size(primeros) + 1):
+        t = sl.get_element(primeros, i)
+        sl.add_last(info_primeros, {
             "pickup_datetime": fecha(t["pickup_datetime"], "todo"),
             "pickup_location": [t["pickup_latitude"], t["pickup_longitude"]],
             "dropoff_datetime": fecha(t["dropoff_datetime"], "todo"),
@@ -192,9 +195,10 @@ def req_1(catalog, inicio, final, N):
             "total_amount": t["total_amount"]
         })
 
-    info_ultimos = []
-    for t in ultimos:
-        info_ultimos.append({
+    info_ultimos = sl.new_list()
+    for i in range(1, sl.size(ultimos) + 1):
+        t = sl.get_element(ultimos, i)
+        sl.add_last(info_ultimos, {
             "pickup_datetime": fecha(t["pickup_datetime"], "todo"),
             "pickup_location": [t["pickup_latitude"], t["pickup_longitude"]],
             "dropoff_datetime": fecha(t["dropoff_datetime"], "todo"),
@@ -206,14 +210,12 @@ def req_1(catalog, inicio, final, N):
     t_final = get_time()
     tiempo_ms = t_final - t_inicial
 
-    respuesta = {
+    return {
         "tiempo_ms": round(tiempo_ms, 2),
         "total_trayectos": cantidad,
         "primeros": info_primeros,
         "ultimos": info_ultimos
     }
-
-    return respuesta
 
 def req_2(catalog, inicio, final, N):
     """
@@ -324,50 +326,57 @@ def req_4(catalog, fecha_busqueda, modo, tiempo_ref, N):
     Retorna el resultado del requerimiento 4
     """
     t_inicial = get_time()
-    t["dropoff_datetime"]=nodo["info"]["key"]
     tabla = {}
-
     elementos = catalog["table"]["elements"]
-    for pos in elementos:
-        if pos and pos["first"]:
-            nodo = pos["first"]
+    for bucket in elementos:
+        if bucket and bucket["first"]:
+            nodo = bucket["first"]
             while nodo is not None:
                 t = nodo["info"]["value"]
-                fecha_drop = fecha(t["dropoff_datetime"])
-                fecha_sola = fecha_drop.split(" ")[0] 
+                fecha_drop = fecha(t["dropoff_datetime"], "todo")
+                fecha_sola = fecha_drop.split(" ")[0]
+
                 if fecha_sola not in tabla:
-                    tabla[fecha_sola] = []
-                tabla[fecha_sola].append(t)
+                    tabla[fecha_sola] = sl.new_list()
+                sl.add_last(tabla[fecha_sola], t)
+
                 nodo = nodo["next"]
 
-    trayectos = tabla.get(fecha_busqueda, [])
-    filtrados = []
+    if fecha_busqueda in tabla:
+        trayectos = tabla[fecha_busqueda]
+    else:
+        trayectos = sl.new_list()
 
-    for t in trayectos:
-        hora_fin = fecha(t["dropoff_datetime"], "hora")  
+    filtrados = sl.new_list()
+
+    for i in range(1, sl.size(trayectos) + 1):
+        t = sl.get_element(trayectos, i)
+        hora_fin = fecha(t["dropoff_datetime"], "hora")
+
         if modo == "ANTES":
             if hora_fin < tiempo_ref:
-                filtrados.append(t)
+                sl.add_last(filtrados, t)
         elif modo == "DESPUES":
             if hora_fin > tiempo_ref:
-                filtrados.append(t)
+                sl.add_last(filtrados, t)
 
     filtrados = sl.quick_sort(filtrados, sl.sort_criteria_r4)
-    cantidad = len(filtrados)
+    cantidad = sl.size(filtrados)
 
     if cantidad > 0:
-        primeros = filtrados[:N]
+        primeros = sl.sub_list(filtrados, 1, N)
     else:
-        primeros = []
+        primeros = sl.new_list()
 
     if cantidad > 2 * N:
-        ultimos = filtrados[-N:]
+        ultimos = sl.sub_list(filtrados, cantidad - N + 1, N)
     else:
-        ultimos = []
+        ultimos = sl.new_list()
 
-    info_primeros = []
-    for t in primeros:
-        info_primeros.append({
+    info_primeros = sl.new_list()
+    for i in range(1, sl.size(primeros) + 1):
+        t = sl.get_element(primeros, i)
+        sl.add_last(info_primeros, {
             "pickup_datetime": fecha(t["pickup_datetime"], "todo"),
             "pickup_location": [t["pickup_latitude"], t["pickup_longitude"]],
             "dropoff_datetime": fecha(t["dropoff_datetime"], "todo"),
@@ -376,9 +385,10 @@ def req_4(catalog, fecha_busqueda, modo, tiempo_ref, N):
             "total_amount": t["total_amount"]
         })
 
-    info_ultimos = []
-    for t in ultimos:
-        info_ultimos.append({
+    info_ultimos = sl.new_list()
+    for i in range(1, sl.size(ultimos) + 1):
+        t = sl.get_element(ultimos, i)
+        sl.add_last(info_ultimos, {
             "pickup_datetime": fecha(t["pickup_datetime"], "todo"),
             "pickup_location": [t["pickup_latitude"], t["pickup_longitude"]],
             "dropoff_datetime": fecha(t["dropoff_datetime"], "todo"),
@@ -390,14 +400,12 @@ def req_4(catalog, fecha_busqueda, modo, tiempo_ref, N):
     t_final = get_time()
     tiempo_ms = t_final - t_inicial
 
-    respuesta = {
+    return {
         "tiempo_ms": round(tiempo_ms, 2),
         "total_trayectos": cantidad,
         "primeros": info_primeros,
         "ultimos": info_ultimos
     }
-
-    return respuesta
 
 
 def req_5(catalog, filtro, N):
