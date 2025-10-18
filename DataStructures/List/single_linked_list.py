@@ -15,6 +15,7 @@ def is_present(my_list, element, cmp_function):
     temp=my_list["first"]
     count=0
     while not is_in_array and temp is not None:
+        print(f"Comparando {element} con {temp['info']}")
         if cmp_function(element, temp["info"])==0:
             is_in_array=True
         else:
